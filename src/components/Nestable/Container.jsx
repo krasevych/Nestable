@@ -3,13 +3,13 @@ import pure from 'recompose/pure';
 
 import Item from './Item';
 
-function getDepth(item, childrenProperty) {
+function getDepth(item) {
   // returns depth of item and children
   var depth = 0;
 
-  if (item[childrenProperty]) {
-    item[childrenProperty].forEach(d => {
-      var tmpDepth = getDepth(d, childrenProperty);
+  if (item.children) {
+    item.children.forEach(d => {
+      var tmpDepth = getDepth(d);
 
       if (tmpDepth > depth) {
         depth = tmpDepth;
@@ -22,19 +22,13 @@ function getDepth(item, childrenProperty) {
 
 class Container extends Component {
   render() {
-    const {
-      items,
-      parentPosition,
-      childrenProperty,
-      childrenStyle,
-      topLevel
-    } = this.props;
+    const { items, parentPosition, childrenStyle, topLevel } = this.props;
 
     return (
       <ol style={topLevel ? {} : childrenStyle}>
         {items.map((item, i) => {
           const position = parentPosition.concat([i]);
-          const children = item[childrenProperty];
+          const children = item.children;
           return (
             <Item
               id={item.id}
@@ -43,13 +37,12 @@ class Container extends Component {
               index={i}
               siblings={items}
               position={position}
-              depth={getDepth(item, childrenProperty)}
+              depth={getDepth(item)}
             >
               {children && children.length ? (
                 <WrappedContainer
                   items={children}
                   parentPosition={position}
-                  childrenProperty={childrenProperty}
                   childrenStyle={childrenStyle}
                 />
               ) : null}

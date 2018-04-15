@@ -5,6 +5,9 @@ import './App.css';
 import Nestable from './components/Nestable/Nestable.jsx';
 import { withDragDropContext } from './HOCs/withDragDropContext';
 
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
+
 class App extends Component {
   render() {
     return (
@@ -25,13 +28,13 @@ class App extends Component {
 class Demo extends Component {
   state = {
     items2: [
-      { id: 1, text: 'Item #1', order: [] },
-      { id: 2, text: 'Item #2', order: [] },
-      { id: 3, text: 'Item #3', order: [] },
+      { id: 1, name: 'Item #1', children: [] },
+      { id: 2, name: 'Item #2', children: [] },
+      { id: 3, name: 'Item #3', children: [] },
       {
         id: 4,
-        text: 'Item #4',
-        order: [{ id: 5, text: 'Item #5', order: [] }]
+        name: 'Item #4',
+        children: [{ id: 5, name: 'Item #5', children: [] }]
       }
     ],
 
@@ -74,10 +77,6 @@ class Demo extends Component {
     return <div style={styles.item}>{item.name}</div>;
   };
 
-  updateItems = newItems => {
-    this.setState({ items: newItems });
-  };
-
   render() {
     return (
       <div>
@@ -85,7 +84,7 @@ class Demo extends Component {
         <Nestable
           items={this.state.items}
           renderItem={this.renderItem}
-          onUpdate={this.updateItems}
+          onChange={(item, items) => console.log(item, items)}
           childrenStyle={styles.children}
         />
       </div>
@@ -106,3 +105,4 @@ var styles = {
 };
 
 export default withDragDropContext(Demo);
+// export default DragDropContext(HTML5Backend)(Demo);

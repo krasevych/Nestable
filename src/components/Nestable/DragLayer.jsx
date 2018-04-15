@@ -40,7 +40,7 @@ class CustomDragLayer extends Component {
   }
 
   getChildren = (items, depth) => {
-    const { renderItem, childrenProperty, childrenStyle } = this.props;
+    const { renderItem, childrenStyle } = this.props;
 
     if (!items || !items.length) {
       return null;
@@ -57,7 +57,7 @@ class CustomDragLayer extends Component {
               depth,
               connectDragSource: noopConnectDragSource
             })}
-            {this.getChildren(item[childrenProperty], depth + 1)}
+            {this.getChildren(item.children, depth + 1)}
           </li>
         ))}
       </ol>
@@ -65,13 +65,7 @@ class CustomDragLayer extends Component {
   };
 
   render() {
-    const {
-      item,
-      itemType,
-      renderItem,
-      isDragging,
-      childrenProperty
-    } = this.props;
+    const { item, itemType, renderItem, isDragging } = this.props;
 
     if (!isDragging || itemType !== itemTypes.nestedItem) {
       return null;
@@ -87,7 +81,7 @@ class CustomDragLayer extends Component {
             depth: 1,
             connectDragSource: noopConnectDragSource
           })}
-          {this.getChildren(item.data[childrenProperty], 2)}
+          {this.getChildren(item.data.children, 2)}
         </div>
       </div>
     );

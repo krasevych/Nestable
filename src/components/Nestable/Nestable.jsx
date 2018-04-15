@@ -17,7 +17,7 @@ function createSpliceCommand(position, options = {}) {
       currCommand.$splice = [[index, options.numToRemove, ...itemsToInsert]];
     } else {
       const nextCommand = {};
-      currCommand[index] = { [options.childrenProperty]: nextCommand };
+      currCommand[index] = { children: nextCommand };
       currCommand = nextCommand;
     }
   });
@@ -25,7 +25,7 @@ function createSpliceCommand(position, options = {}) {
   return command;
 }
 
-function replaceNegativeIndex(items, nextPosition, childrenProperty) {
+function replaceNegativeIndex(items, nextPosition) {
   let currItems = items;
 
   return nextPosition.map(nextIndex => {
@@ -53,7 +53,7 @@ function getRealNextPosition(prev, next) {
   return next;
 }
 
-const extendItemsWithChildren = (items, orderPropName) => {
+const createChildrenFromOrder = (items, orderPropName) => {
   const itemsWithChildren = [];
 
   items.forEach(item => {
@@ -81,14 +81,14 @@ const extendItemsWithChildren = (items, orderPropName) => {
 class Nestable extends Component {
   static defaultProps = {
     items: [],
-    childrenProperty: 'children',
+    childrenProperty: 'order',
     childrenStyle: {},
-    onUpdate: () => {},
+    onChange: () => {},
     renderItem: () => {
       throw new Error('Nestable: You must supply a renderItem prop.');
     },
     useDragHandle: false,
-    maxDepth: Infinity,
+    maxDepth: 3,
     threshold: 30
   };
 
@@ -103,10 +103,11 @@ class Nestable extends Component {
 
   state = {};
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.items !== prevState.items) {
+  static getDerivedStateFromProps({ items, childrenProperty }, prevState) {
+    if (items !== prevState.items) {
       return {
-        items: extendItemsWithChildren(nextProps.items, 'order')
+        items: createChildrenFromOrder(items, childrenProperty)
+        // items: nextProps.items
       };
     }
   }
@@ -124,7 +125,6 @@ class Nestable extends Component {
     };
   }
   moveItem = ({ dragItem, prevPosition, nextPosition }) => {
-    const { childrenProperty } = this.props;
     let newItems = this.state.items;
 
     // the remove action might affect the next position,
@@ -132,24 +132,18 @@ class Nestable extends Component {
     let realNextPosition = getRealNextPosition(prevPosition, nextPosition);
 
     if (realNextPosition[realNextPosition.length - 1] === -1) {
-      realNextPosition = replaceNegativeIndex(
-        newItems,
-        realNextPosition,
-        childrenProperty
-      );
+      realNextPosition = replaceNegativeIndex(newItems, realNextPosition);
     }
 
     // remove item from old position
     const removeItem = createSpliceCommand(prevPosition, {
-      numToRemove: 1,
-      childrenProperty
+      numToRemove: 1
     });
 
     // add item to new position
     const insertItem = createSpliceCommand(realNextPosition, {
       numToRemove: 0,
-      itemsToInsert: [dragItem],
-      childrenProperty
+      itemsToInsert: [dragItem]
     });
 
     newItems = update(newItems, removeItem);
@@ -160,26 +154,24 @@ class Nestable extends Component {
     return Promise.resolve(realNextPosition);
   };
 
-  dropItem = () => {
-    this.props.onUpdate(this.state.items);
+  dropItem = droppedItem => {
+    this.props.onChange(droppedItem, this.state.items);
   };
 
   render() {
     const { items } = this.state;
-    const { renderItem, childrenProperty, childrenStyle } = this.props;
+    const { renderItem, childrenStyle } = this.props;
 
     return (
       <div>
         <Container
           items={items}
           parentPosition={[]}
-          childrenProperty={childrenProperty}
           childrenStyle={childrenStyle}
           topLevel={true}
         />
         <CustomDragLayer
           renderItem={renderItem}
-          childrenProperty={childrenProperty}
           childrenStyle={childrenStyle}
         />
       </div>

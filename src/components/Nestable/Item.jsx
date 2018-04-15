@@ -61,7 +61,8 @@ const cardTarget = {
     mouse.lastX = 0;
 
     if (!monitor.didDrop()) {
-      props.dropItem();
+      const item = monitor.getItem();
+      props.dropItem(item.data);
     }
   },
   hover(props, monitor, component) {
