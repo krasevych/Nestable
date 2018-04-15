@@ -1,0 +1,27 @@
+{
+  "name": "nestable",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "react-scripts": "1.1.4"
+  },
+  "dependencies": {
+    "prop-types": "^15.6.1",
+    "react": "^16.3.1",
+    "react-addons-shallow-compare": "^15.6.2",
+    "react-addons-update": "^15.6.2",
+    "react-dnd": "^2.6.0",
+    "react-dnd-html5-backend": "^2.6.0",
+    "react-dnd-mouse-backend": "^0.1.1",
+    "react-dnd-multi-backend": "^3.1.2",
+    "react-dnd-touch-backend": "^0.3.21",
+    "react-dom": "^16.3.1",
+    "recompose": "^0.26.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
