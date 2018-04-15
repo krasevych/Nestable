@@ -64,6 +64,18 @@ class Demo extends Component {
         order: '3.1'
       },
       {
+        id: 'uuid-4',
+        name: 'Page 4',
+        href: 'http://link.to/page-4',
+        order: '3.2'
+      },
+      {
+        id: 'uuid-4',
+        name: 'Page 4',
+        href: 'http://link.to/page-4',
+        order: '3.1.1'
+      },
+      {
         id: 'uuid-5',
         name: 'Page 5',
         href: 'http://link.to/page-5',
@@ -72,8 +84,8 @@ class Demo extends Component {
     ]
   };
 
-  renderItem = ({ item }, ...arg) => {
-    console.log(777, arg);
+  renderItem = (item, nestable) => {
+    console.log(777, nestable);
     return <div style={styles.item}>{item.name}</div>;
   };
 
@@ -84,6 +96,7 @@ class Demo extends Component {
         <Nestable
           items={this.state.items}
           renderItem={this.renderItem}
+          collapsed={['uuid-3']}
           onChange={(item, items) => console.log(item, items)}
           childrenStyle={styles.children}
         />

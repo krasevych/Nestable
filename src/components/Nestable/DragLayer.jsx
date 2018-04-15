@@ -50,8 +50,7 @@ class CustomDragLayer extends Component {
       <ol style={childrenStyle}>
         {items.map((item, i) => (
           <li key={i}>
-            {renderItem({
-              item,
+            {renderItem(item, {
               isDragging: false,
               isPreview: true,
               depth,
@@ -74,8 +73,7 @@ class CustomDragLayer extends Component {
     return (
       <div style={layerStyles}>
         <div style={getItemStyles(this.props, item.clientRect)}>
-          {renderItem({
-            item: item.data,
+          {renderItem(item.data, {
             isDragging: false,
             isPreview: true,
             depth: 1,

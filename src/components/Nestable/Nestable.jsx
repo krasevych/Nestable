@@ -81,6 +81,7 @@ const createChildrenFromOrder = (items, orderPropName) => {
 class Nestable extends Component {
   static defaultProps = {
     items: [],
+    collapsed: [],
     childrenProperty: 'order',
     childrenStyle: {},
     onChange: () => {},

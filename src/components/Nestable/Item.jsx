@@ -7,6 +7,7 @@ import getContext from 'recompose/getContext';
 import { DragSource, DropTarget } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import itemTypes from './itemTypes';
+import Collapse from './Collapse';
 
 // keep track of horizontal mouse movement
 const mouse = {
@@ -214,6 +215,9 @@ const cardTarget = {
 };
 
 class Item extends Component {
+  state = {
+    isCollapsed: true
+  };
   componentDidMount() {
     // use empty image as a drag preview so browsers don't draw it
     // and we can draw whatever we want on the custom drag layer instead.
@@ -228,6 +232,16 @@ class Item extends Component {
     return shallowCompare(this, nextProps, nextState, nextContext);
   }
 
+  collapse = () => {
+    this.setState({ isCollapsed: true });
+  };
+
+  toggleCollapse = () => {
+    this.setState(({ isCollapsed }) => ({
+      isCollapsed: !isCollapsed
+    }));
+  };
+
   render() {
     const {
       item,
@@ -240,28 +254,38 @@ class Item extends Component {
       renderItem
     } = this.props;
 
+    const { isCollapsed } = this.state;
+
     // params passed to renderItem callback
     const renderParams = {
-      item,
       isDragging,
       isPreview: false,
       depth: position.length
     };
 
+    const collapseChildren = (
+      <Collapse isOpenned={!isCollapsed}>{children}</Collapse>
+    );
+
     if (useDragHandle) {
       renderParams.connectDragSource = connectDragSource;
       return connectDropTarget(
         <li>
-          {renderItem(renderParams)}
-          {children}
+          {renderItem(item, renderParams)}
+          {collapseChildren}
         </li>
       );
     }
 
     return compose(connectDropTarget, connectDragSource)(
       <li>
-        {renderItem(renderParams)}
-        {children}
+        {children ? (
+          <button onClick={this.toggleCollapse}>
+            {isCollapsed ? '+' : '-'}
+          </button>
+        ) : null}
+        {renderItem(item, renderParams)}
+        {collapseChildren}
       </li>
     );
   }
