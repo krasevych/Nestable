@@ -42,7 +42,7 @@ class Container extends Component {
     } = this.props;
 
     return (
-      <ol style={topLevel ? {} : childrenStyle}>
+      <ol className={topLevel && 'is-top-level'}>
         {items.map((item, i) => {
           const position = parentPosition.concat([i]);
           const children = item.children;
@@ -54,6 +54,8 @@ class Container extends Component {
               key={item.id}
               item={item}
               index={i}
+              isFirst={i === 0}
+              isLast={i === items.length - 1}
               siblings={items}
               position={position}
               isCollapsed={isCollapsed}

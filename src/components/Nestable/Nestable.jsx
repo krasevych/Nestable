@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import update from 'react-addons-update';
+import update from 'immutability-helper';
 import pure from 'recompose/pure';
 
 import CustomDragLayer from './DragLayer';
@@ -164,7 +164,7 @@ class Nestable extends Component {
     const { renderItem, childrenStyle, collapsed } = this.props;
 
     return (
-      <div>
+      <div className="ws-nestable">
         <Container
           collapsed={collapsed}
           items={items}

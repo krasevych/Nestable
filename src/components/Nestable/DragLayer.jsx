@@ -30,38 +30,14 @@ function getItemStyles(props, clientRect) {
   };
 }
 
-const noopConnectDragSource = el => el;
+const noop = patams => patams;
 
 class CustomDragLayer extends Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.isDragging !== nextProps.isDragging) {
-      document.body.classList.toggle('dnd-dragging');
+      document.getElementsByTagName('html')[0].classList.toggle('dnd-dragging');
     }
   }
-
-  getChildren = (items, depth) => {
-    const { renderItem, childrenStyle } = this.props;
-
-    if (!items || !items.length) {
-      return null;
-    }
-
-    return (
-      <ol style={childrenStyle}>
-        {items.map((item, i) => (
-          <li key={i}>
-            {renderItem(item, {
-              isDragging: false,
-              isPreview: true,
-              depth,
-              connectDragSource: noopConnectDragSource
-            })}
-            {this.getChildren(item.children, depth + 1)}
-          </li>
-        ))}
-      </ol>
-    );
-  };
 
   render() {
     const { item, itemType, renderItem, isDragging } = this.props;
@@ -74,12 +50,16 @@ class CustomDragLayer extends Component {
       <div style={layerStyles}>
         <div style={getItemStyles(this.props, item.clientRect)}>
           {renderItem(item.data, {
-            isDragging: false,
+            isDragging: true,
             isPreview: true,
             depth: 1,
-            connectDragSource: noopConnectDragSource
+            isDropAllowed: itemType !== itemTypes.nestedItem,
+            expand: noop,
+            collapse: noop,
+            hasChildren: item.data.children.length > 0,
+            toggle: noop,
+            connectDragSource: noop
           })}
-          {/* {this.getChildren(item.data.children, 2)} */}
         </div>
       </div>
     );
@@ -87,12 +67,15 @@ class CustomDragLayer extends Component {
 }
 
 export default compose(
-  DragLayer(monitor => ({
-    item: monitor.getItem(),
-    itemType: monitor.getItemType(),
-    initialOffset: monitor.getInitialSourceClientOffset(),
-    currentOffset: monitor.getSourceClientOffset(),
-    isDragging: monitor.isDragging()
-  })),
+  DragLayer(monitor => {
+    // console.log(888, monitor, monitor.getItem());
+    return {
+      item: monitor.getItem(),
+      itemType: monitor.getItemType(),
+      initialOffset: monitor.getInitialSourceClientOffset(),
+      currentOffset: monitor.getSourceClientOffset(),
+      isDragging: monitor.isDragging()
+    };
+  }),
   pure
 )(CustomDragLayer);

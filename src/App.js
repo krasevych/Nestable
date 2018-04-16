@@ -25,19 +25,27 @@ class App extends Component {
   }
 }
 
+const DropZone = () => {
+  return <div className="ws-drop-zone">Drop Page Here</div>;
+};
+const PageItem = ({ nestable, item }) => {
+  const draggingClass = nestable.isDragging ? ' is-dragging' : '';
+  const allowedClass = nestable.isDropAllowed ? ' is-allowed' : '';
+  return (
+    <div className={'ws-page-manager-item' + draggingClass + allowedClass}>
+      {nestable.hasChildren && (
+        <div className="ws-page-manage-item-toggle" onClick={nestable.toggle}>
+          {nestable.isCollapsed ? '+' : '-'}
+        </div>
+      )}
+
+      <a href={item.href}>{item.name}</a>
+    </div>
+  );
+};
+
 class Demo extends Component {
   state = {
-    items2: [
-      { id: 1, name: 'Item #1', children: [] },
-      { id: 2, name: 'Item #2', children: [] },
-      { id: 3, name: 'Item #3', children: [] },
-      {
-        id: 4,
-        name: 'Item #4',
-        children: [{ id: 5, name: 'Item #5', children: [] }]
-      }
-    ],
-
     items: [
       {
         id: 'uuid-1',
@@ -58,45 +66,57 @@ class Demo extends Component {
         order: '3'
       },
       {
-        id: 'uuid-4',
+        id: 'uuid-3.1',
         name: 'Page 3.1',
         href: 'http://link.to/page-4',
         order: '3.1'
       },
       {
-        id: 'uuid-42',
+        id: 'uuid-3.2',
         name: 'Page 3.2',
         href: 'http://link.to/page-4',
         order: '3.2'
       },
       {
-        id: 'uuid-411',
+        id: 'uuid-3.1.1',
         name: 'Page 3.1.1',
         href: 'http://link.to/page-4',
         order: '3.1.1'
       },
       {
+        id: 'uuid-4',
+        name: 'Page 4',
+        href: 'http://link.to/page-5',
+        order: '4'
+      },
+      {
         id: 'uuid-5',
         name: 'Page 5',
         href: 'http://link.to/page-5',
-        order: '4'
+        order: '5'
+      },
+      {
+        id: 'uuid-6',
+        name: 'Page 6',
+        href: 'http://link.to/page-5',
+        order: '6'
+      },
+      {
+        id: 'uuid-7',
+        name: 'Page 7',
+        href: 'http://link.to/page-5',
+        order: '7'
       }
     ]
   };
 
   renderItem = (item, nestable) => {
-    console.log(777, item, nestable);
     return (
-      <div style={styles.item}>
-        <button onClick={nestable.toggle}>
-          {nestable.isCollapsed ? '+++' : '---'}
-        </button>
-        {nestable.connectDragSource(
-          <div>
-            <div style={styles.handle} />
-            <div>{item.name}</div>
-            {/* <div>{nestable.hasChildren.toString()}</div> */}
-          </div>
+      <div className="container">
+        {nestable.isDropLayer ? (
+          <DropZone />
+        ) : (
+          <PageItem nestable={nestable} item={item} />
         )}
       </div>
     );
@@ -104,39 +124,17 @@ class Demo extends Component {
 
   render() {
     return (
-      <div>
-        <h1>1111</h1>
+      <div className="nestable-demo-container">
         <Nestable
-          customDragHandler
           items={this.state.items}
           renderItem={this.renderItem}
-          collapsed={['uuid-4']}
+          collapsed={['uuid-3']}
           onChange={(item, items) => console.log(item, items)}
-          childrenStyle={styles.children}
         />
       </div>
     );
   }
 }
-
-var styles = {
-  item: {
-    marginBottom: 5,
-    padding: 10,
-    border: '1px solid #000',
-    background: '#fff'
-  },
-  handle: {
-    width: 20,
-    height: 20,
-    marginRight: 10,
-    cursor: 'move',
-    background: '#ccc'
-  },
-  children: {
-    marginLeft: 30
-  }
-};
 
 export default withDragDropContext(Demo);
 // export default DragDropContext(HTML5Backend)(Demo);

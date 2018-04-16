@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { throttle } from 'lodash';
 import { findDOMNode } from 'react-dom';
 import shallowCompare from 'react-addons-shallow-compare';
 import compose from 'recompose/compose';
@@ -43,7 +44,6 @@ const cardSource = {
   },
   beginDrag(props, monitor, component) {
     const node = findDOMNode(component);
-
     return {
       id: props.id,
       index: props.index,
@@ -66,19 +66,18 @@ const cardTarget = {
       props.dropItem(item.data);
     }
   },
-  hover(props, monitor, component) {
-    if (!component) {
+  hover: throttle((props, monitor, component) => {
+    const item = monitor.getItem();
+
+    if (!component || !item) {
       return;
     }
 
-    const item = monitor.getItem();
-
-    console.log(111, item);
     // the item being dragged
     const {
-      position: prevPosition,
       data: dragItem,
       depth: dragDepth,
+      position: prevPosition,
       index: prevIndex
     } = item;
 
@@ -212,7 +211,7 @@ const cardTarget = {
         item.position = nextPos;
         item.index = nextPos[nextPos.length - 1];
       });
-  }
+  }, 100)
 };
 
 class Item extends Component {
@@ -259,6 +258,9 @@ class Item extends Component {
     const {
       item,
       position,
+      isFirst,
+      isLast,
+      isOver,
       children,
       isDragging,
       connectDragSource,
@@ -272,7 +274,10 @@ class Item extends Component {
     // params passed to renderItem callback
     const renderParams = {
       isCollapsed,
-      isDragging,
+      isFirst,
+      isLast,
+      isDragging: false,
+      isDropLayer: !!isDragging,
       expand: this.expand,
       collapse: this.collapse,
       hasChildren: item.children.length > 0,
@@ -282,28 +287,28 @@ class Item extends Component {
     };
 
     const collapseChildren = (
-      <Collapse isOpenned={!isCollapsed}>{children}</Collapse>
+      <Collapse isOpenned={!isCollapsed || isOver}>{children}</Collapse>
     );
 
+    if (isOver) {
+      console.log(888, item.name, isOver, isDragging);
+    }
+
+    const className = `${isFirst && 'is-first'} ${isLast && 'is-last'}`;
     if (customDragHandler) {
       renderParams.connectDragSource = connectDragSource;
       return connectDropTarget(
-        <li>
+        <li className={className}>
           {renderItem(item, renderParams)}
-          {collapseChildren}
+          {!isDragging && collapseChildren}
         </li>
       );
     }
 
     return compose(connectDropTarget, connectDragSource)(
-      <li>
-        {children ? (
-          <button onClick={this.toggleCollapse}>
-            {isCollapsed ? '+' : '-'}
-          </button>
-        ) : null}
+      <li className={className}>
         {renderItem(item, renderParams)}
-        {collapseChildren}
+        {!isDragging && collapseChildren}
       </li>
     );
   }
@@ -318,8 +323,9 @@ export default compose(
     moveItem: PropTypes.func.isRequired,
     dropItem: PropTypes.func.isRequired
   }),
-  DropTarget(itemTypes.nestedItem, cardTarget, connect => ({
-    connectDropTarget: connect.dropTarget()
+  DropTarget(itemTypes.nestedItem, cardTarget, (connect, monitor) => ({
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver()
   })),
   DragSource(itemTypes.nestedItem, cardSource, (connect, monitor) => ({
     connectDragSource: connect.dragSource(),
