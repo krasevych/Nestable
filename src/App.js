@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import logo from './logo.svg';
 import './App.css';
-import Nestable from './components/Nestable/Nestable.jsx';
+import Nestable from './components/Nestable/Nestable';
 import { withDragDropContext } from './HOCs/withDragDropContext';
 
 import { DragDropContext } from 'react-dnd';
@@ -59,19 +59,19 @@ class Demo extends Component {
       },
       {
         id: 'uuid-4',
-        name: 'Page 4',
+        name: 'Page 3.1',
         href: 'http://link.to/page-4',
         order: '3.1'
       },
       {
-        id: 'uuid-4',
-        name: 'Page 4',
+        id: 'uuid-42',
+        name: 'Page 3.2',
         href: 'http://link.to/page-4',
         order: '3.2'
       },
       {
-        id: 'uuid-4',
-        name: 'Page 4',
+        id: 'uuid-411',
+        name: 'Page 3.1.1',
         href: 'http://link.to/page-4',
         order: '3.1.1'
       },
@@ -85,8 +85,21 @@ class Demo extends Component {
   };
 
   renderItem = (item, nestable) => {
-    console.log(777, nestable);
-    return <div style={styles.item}>{item.name}</div>;
+    console.log(777, item, nestable);
+    return (
+      <div style={styles.item}>
+        <button onClick={nestable.toggle}>
+          {nestable.isCollapsed ? '+++' : '---'}
+        </button>
+        {nestable.connectDragSource(
+          <div>
+            <div style={styles.handle} />
+            <div>{item.name}</div>
+            {/* <div>{nestable.hasChildren.toString()}</div> */}
+          </div>
+        )}
+      </div>
+    );
   };
 
   render() {
@@ -94,9 +107,10 @@ class Demo extends Component {
       <div>
         <h1>1111</h1>
         <Nestable
+          customDragHandler
           items={this.state.items}
           renderItem={this.renderItem}
-          collapsed={['uuid-3']}
+          collapsed={['uuid-4']}
           onChange={(item, items) => console.log(item, items)}
           childrenStyle={styles.children}
         />
@@ -111,6 +125,13 @@ var styles = {
     padding: 10,
     border: '1px solid #000',
     background: '#fff'
+  },
+  handle: {
+    width: 20,
+    height: 20,
+    marginRight: 10,
+    cursor: 'move',
+    background: '#ccc'
   },
   children: {
     marginLeft: 30

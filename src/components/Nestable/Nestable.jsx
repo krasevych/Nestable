@@ -88,13 +88,13 @@ class Nestable extends Component {
     renderItem: () => {
       throw new Error('Nestable: You must supply a renderItem prop.');
     },
-    useDragHandle: false,
+    customDragHandler: false,
     maxDepth: 3,
     threshold: 30
   };
 
   static childContextTypes = {
-    useDragHandle: PropTypes.bool.isRequired,
+    customDragHandler: PropTypes.bool.isRequired,
     maxDepth: PropTypes.number.isRequired,
     threshold: PropTypes.number.isRequired,
     renderItem: PropTypes.func.isRequired,
@@ -114,10 +114,10 @@ class Nestable extends Component {
   }
 
   getChildContext() {
-    const { useDragHandle, maxDepth, threshold, renderItem } = this.props;
+    const { customDragHandler, maxDepth, threshold, renderItem } = this.props;
 
     return {
-      useDragHandle,
+      customDragHandler,
       maxDepth,
       threshold,
       renderItem,
@@ -161,11 +161,12 @@ class Nestable extends Component {
 
   render() {
     const { items } = this.state;
-    const { renderItem, childrenStyle } = this.props;
+    const { renderItem, childrenStyle, collapsed } = this.props;
 
     return (
       <div>
         <Container
+          collapsed={collapsed}
           items={items}
           parentPosition={[]}
           childrenStyle={childrenStyle}

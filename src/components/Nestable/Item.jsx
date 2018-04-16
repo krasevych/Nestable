@@ -73,6 +73,7 @@ const cardTarget = {
 
     const item = monitor.getItem();
 
+    console.log(111, item);
     // the item being dragged
     const {
       position: prevPosition,
@@ -218,6 +219,14 @@ class Item extends Component {
   state = {
     isCollapsed: true
   };
+  static getDerivedStateFromProps({ isCollapsed }, prevState) {
+    if (prevState.prevState !== isCollapsed) {
+      return {
+        isCollapsed
+      };
+    }
+    return null;
+  }
   componentDidMount() {
     // use empty image as a drag preview so browsers don't draw it
     // and we can draw whatever we want on the custom drag layer instead.
@@ -236,6 +245,10 @@ class Item extends Component {
     this.setState({ isCollapsed: true });
   };
 
+  expand = () => {
+    this.setState({ isCollapsed: false });
+  };
+
   toggleCollapse = () => {
     this.setState(({ isCollapsed }) => ({
       isCollapsed: !isCollapsed
@@ -250,7 +263,7 @@ class Item extends Component {
       isDragging,
       connectDragSource,
       connectDropTarget,
-      useDragHandle,
+      customDragHandler,
       renderItem
     } = this.props;
 
@@ -258,7 +271,12 @@ class Item extends Component {
 
     // params passed to renderItem callback
     const renderParams = {
+      isCollapsed,
       isDragging,
+      expand: this.expand,
+      collapse: this.collapse,
+      hasChildren: item.children.length > 0,
+      toggle: this.toggleCollapse,
       isPreview: false,
       depth: position.length
     };
@@ -267,7 +285,7 @@ class Item extends Component {
       <Collapse isOpenned={!isCollapsed}>{children}</Collapse>
     );
 
-    if (useDragHandle) {
+    if (customDragHandler) {
       renderParams.connectDragSource = connectDragSource;
       return connectDropTarget(
         <li>
@@ -293,7 +311,7 @@ class Item extends Component {
 
 export default compose(
   getContext({
-    useDragHandle: PropTypes.bool.isRequired,
+    customDragHandler: PropTypes.bool.isRequired,
     maxDepth: PropTypes.number.isRequired,
     threshold: PropTypes.number.isRequired,
     renderItem: PropTypes.func.isRequired,

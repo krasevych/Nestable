@@ -79,7 +79,7 @@ class CustomDragLayer extends Component {
             depth: 1,
             connectDragSource: noopConnectDragSource
           })}
-          {this.getChildren(item.data.children, 2)}
+          {/* {this.getChildren(item.data.children, 2)} */}
         </div>
       </div>
     );
