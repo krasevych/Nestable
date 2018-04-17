@@ -20,18 +20,48 @@ function getDepth(item) {
   return depth + 1;
 }
 
-function calcCollapse(item, collapsedList) {
-  if (!collapsedList) return;
-
+function calcCollapsedList(collapsedList, items) {
   const isArr = collapsedList.push;
   if (isArr) {
-    return collapsedList.includes(item.id);
+    return collapsedList;
   }
 
-  return collapsedList === 'all';
+  if (collapsedList === 'all') {
+    return items.map(item => item.id);
+  }
+
+  return [];
 }
 
 class Container extends Component {
+  state = {
+    collapsedList: []
+  };
+
+  static getDerivedStateFromProps({ collapsed, items }, prevState) {
+    return {
+      collapsedList: calcCollapsedList(collapsed, items)
+    };
+  }
+
+  handleCollapseChange = (isCollapsed, item) => {
+    this.setState(({ collapsedList }) => {
+      let newCollapsedList = collapsedList;
+
+      if (isCollapsed) {
+        newCollapsedList.push(item.id);
+      } else {
+        newCollapsedList = collapsedList.filter(
+          collapsedId => collapsedId !== item.id
+        );
+      }
+
+      return {
+        collapsedList: newCollapsedList
+      };
+    });
+  };
+
   render() {
     const {
       items,
@@ -41,12 +71,14 @@ class Container extends Component {
       collapsed
     } = this.props;
 
+    const { collapsedList } = this.state;
+
     return (
       <ol className={topLevel && 'is-top-level'}>
         {items.map((item, i) => {
           const position = parentPosition.concat([i]);
           const children = item.children;
-          const isCollapsed = calcCollapse(item, collapsed);
+          const isCollapsed = collapsedList.includes(item.id);
 
           return (
             <Item
@@ -59,6 +91,7 @@ class Container extends Component {
               siblings={items}
               position={position}
               isCollapsed={isCollapsed}
+              onCollapseChange={this.handleCollapseChange}
               depth={getDepth(item)}
             >
               {children && children.length ? (

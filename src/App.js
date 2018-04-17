@@ -1,29 +1,12 @@
 import React, { Component } from 'react';
 
-import logo from './logo.svg';
 import './App.css';
 import Nestable from './components/Nestable/Nestable';
+import NestableStyled from './components/NestableStyled/NestableStyled';
 import { withDragDropContext } from './HOCs/withDragDropContext';
 
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-        <Nestable />
-      </div>
-    );
-  }
-}
 
 const DropZone = () => {
   return <div className="ws-drop-zone">Drop Page Here</div>;
@@ -125,9 +108,8 @@ class Demo extends Component {
   render() {
     return (
       <div className="nestable-demo-container">
-        <Nestable
+        <NestableStyled
           items={this.state.items}
-          renderItem={this.renderItem}
           collapsed={['uuid-3']}
           onChange={(item, items) => console.log(item, items)}
         />
@@ -136,5 +118,5 @@ class Demo extends Component {
   }
 }
 
-export default withDragDropContext(Demo);
+export default Demo;
 // export default DragDropContext(HTML5Backend)(Demo);

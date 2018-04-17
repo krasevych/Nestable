@@ -216,10 +216,10 @@ const cardTarget = {
 
 class Item extends Component {
   state = {
-    isCollapsed: true
+    isCollapsed: null
   };
   static getDerivedStateFromProps({ isCollapsed }, prevState) {
-    if (prevState.prevState !== isCollapsed) {
+    if (prevState.isCollapsed === null) {
       return {
         isCollapsed
       };
@@ -254,6 +254,12 @@ class Item extends Component {
     }));
   };
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.isCollapsed !== this.state.isCollapsed) {
+      this.props.onCollapseChange(this.state.isCollapsed, this.props.item);
+    }
+  }
+
   render() {
     const {
       item,
@@ -286,30 +292,26 @@ class Item extends Component {
       depth: position.length
     };
 
-    const collapseChildren = (
-      <Collapse isOpenned={!isCollapsed || isOver}>{children}</Collapse>
-    );
+    const renderLiItem = params => {
+      const className = `${isFirst && 'is-first'} ${isLast && 'is-last'}`;
 
-    if (isOver) {
-      console.log(888, item.name, isOver, isDragging);
-    }
-
-    const className = `${isFirst && 'is-first'} ${isLast && 'is-last'}`;
-    if (customDragHandler) {
-      renderParams.connectDragSource = connectDragSource;
-      return connectDropTarget(
+      return (
         <li className={className}>
-          {renderItem(item, renderParams)}
-          {!isDragging && collapseChildren}
+          {renderItem(item, params)}
+          {!isDragging && (
+            <Collapse isOpenned={!isCollapsed || isOver}>{children}</Collapse>
+          )}
         </li>
       );
+    };
+
+    if (customDragHandler) {
+      renderParams.connectDragSource = connectDragSource;
+      return connectDropTarget(renderLiItem(renderParams));
     }
 
     return compose(connectDropTarget, connectDragSource)(
-      <li className={className}>
-        {renderItem(item, renderParams)}
-        {!isDragging && collapseChildren}
-      </li>
+      renderLiItem(renderParams)
     );
   }
 }

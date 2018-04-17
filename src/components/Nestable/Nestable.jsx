@@ -53,7 +53,8 @@ function getRealNextPosition(prev, next) {
   return next;
 }
 
-const createChildrenFromOrder = (items, orderPropName) => {
+// create list with 'children' props from order: {..., order:'3.1'} -> {..., children:[...]
+function createChildrenFromOrder(items, orderPropName) {
   const itemsWithChildren = [];
 
   items.forEach(item => {
@@ -76,7 +77,7 @@ const createChildrenFromOrder = (items, orderPropName) => {
   });
 
   return itemsWithChildren;
-};
+}
 
 class Nestable extends Component {
   static defaultProps = {
