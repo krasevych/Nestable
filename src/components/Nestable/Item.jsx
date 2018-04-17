@@ -211,7 +211,7 @@ const cardTarget = {
         item.position = nextPos;
         item.index = nextPos[nextPos.length - 1];
       });
-  }, 100)
+  }, 30)
 };
 
 class Item extends Component {

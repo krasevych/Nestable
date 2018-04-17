@@ -2693,7 +2693,7 @@ fb-watchman@^2.0.0:
   dependencies:
     bser "^2.0.0"
 
-fbjs@^0.8.1, fbjs@^0.8.16, fbjs@^0.8.4, fbjs@^0.8.9:
+fbjs@^0.8.1, fbjs@^0.8.16, fbjs@^0.8.4:
   version "0.8.16"
   resolved "https://registry.yarnpkg.com/fbjs/-/fbjs-0.8.16.tgz#5e67432f550dc41b572bf55847b8aca64e5337db"
   dependencies:
@@ -5602,13 +5602,6 @@ react-addons-shallow-compare@^15.6.2:
     fbjs "^0.8.4"
     object-assign "^4.1.0"
 
-react-addons-update@^15.6.2:
-  version "15.6.2"
-  resolved "https://registry.yarnpkg.com/react-addons-update/-/react-addons-update-15.6.2.tgz#e53753c5b34887974510c882d7fb075851d5e504"
-  dependencies:
-    fbjs "^0.8.9"
-    object-assign "^4.1.0"
-
 react-dev-utils@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-5.0.1.tgz#1f396e161fe44b595db1b186a40067289bf06613"
@@ -5638,12 +5631,6 @@ react-dnd-html5-backend@*, react-dnd-html5-backend@^2.6.0:
   dependencies:
     lodash "^4.2.0"
 
-react-dnd-mouse-backend@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/react-dnd-mouse-backend/-/react-dnd-mouse-backend-0.1.1.tgz#04c3095a630ce31c0d62fb668b10e87836cfaa7e"
-  dependencies:
-    react-dnd "^2.1.2"
-
 react-dnd-multi-backend@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/react-dnd-multi-backend/-/react-dnd-multi-backend-3.1.2.tgz#520493b7558bc7605ec218da12ddcfacfaec949a"
@@ -5670,7 +5657,7 @@ react-dnd-touch-backend@^0.3.13, react-dnd-touch-backend@^0.3.21:
     invariant "^2.2.2"
     react-dnd "^2.5.4"
 
-react-dnd@*, react-dnd@^2.1.2, react-dnd@^2.5.4, react-dnd@^2.6.0:
+react-dnd@*, react-dnd@^2.5.4, react-dnd@^2.6.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/react-dnd/-/react-dnd-2.6.0.tgz#7fa25676cf827d58a891293e3c1ab59da002545a"
   dependencies:

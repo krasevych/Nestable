@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-import './App.css';
 import Nestable from './components/Nestable/Nestable';
 import NestableStyled from './components/NestableStyled/NestableStyled';
 import { withDragDropContext } from './HOCs/withDragDropContext';
@@ -119,4 +118,3 @@ class Demo extends Component {
 }
 
 export default Demo;
-// export default DragDropContext(HTML5Backend)(Demo);
